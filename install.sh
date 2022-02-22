@@ -6,10 +6,14 @@ rm -rf cronicle-plugin-snapav-wattbox
 
 echo "Installing"
 
-npm install cronicle-plugin-snapav-wattbox
+git clone https://github.com/JTF4/cronicle-plugin-snapav-wattbox
 
 echo "Moving"
 
-mv ./node_modules/cronicle-plugin-snapav-wattbox ./cronicle-plugin-snapav-wattbox
+cd ./cronicle-plugin-snapav-wattbox
 
-rm -f install.sh
+yarn install
+
+rm ./install.sh
+
+echo "Finished"
