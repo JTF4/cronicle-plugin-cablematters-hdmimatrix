@@ -1,14 +1,12 @@
 
 #!/bin/sh
-echo "Installing Plugin"
+echo "Installing The WattBox Cronicle Plugin"
 
-rm -rf cronicle-plugin-snapav-wattbox
-
-echo "Installing"
+echo "Downloading Plugin"
 
 git clone https://github.com/JTF4/cronicle-plugin-snapav-wattbox
 
-echo "Moving"
+echo "Installing Dependancies"
 
 cd ./cronicle-plugin-snapav-wattbox
 
@@ -16,4 +14,4 @@ yarn install
 
 rm ./install.sh
 
-echo "Finished"
+echo "Finished Installing"
