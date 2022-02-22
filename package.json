@@ -1,0 +1,29 @@
+{
+  "name": "cronicle-plugin-snapav-wattbox",
+  "version": "1.0.0",
+  "description": "Control WattBox power supplies through Cronicle",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JTF4/cronicle-plugin-snapav-wattbox.git"
+  },
+  "keywords": [
+    "wattbox",
+    "cronicle",
+    "power",
+    "snapav"
+  ],
+  "author": "David Stevens <issues@jtf4.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JTF4/cronicle-plugin-snapav-wattbox/issues"
+  },
+  "homepage": "https://github.com/JTF4/cronicle-plugin-snapav-wattbox#readme",
+  "dependencies": {
+    "node-rest-client": "^3.1.1"
+  }
+}
