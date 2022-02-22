@@ -2,11 +2,13 @@
 #!/bin/sh
 echo "Installing Plugin"
 
-cd ..
-
 rm -rf cronicle-plugin-snapav-wattbox
 
+echo "Installing"
+
 npm install cronicle-plugin-snapav-wattbox
+
+echo "Moving"
 
 mv ./node_modules/cronicle-plugin-snapav-wattbox ./cronicle-plugin-snapav-wattbox
 
