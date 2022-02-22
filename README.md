@@ -1,0 +1,1 @@
+cronicle-plugin-snapav-wattbox
