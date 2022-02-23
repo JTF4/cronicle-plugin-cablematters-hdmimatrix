@@ -16,12 +16,13 @@
  */
 
 var Client = require('node-rest-client').Client;
+var debug =require('debug')('Wattbox-Plugin');
 
 var data;
 
 process.stdin.on('data', res => {
     data = JSON.parse(res);
-    console.log(data);
+    console.log('Starting Plugin');
 
     try {
         let ip = data['params']['ip'];
@@ -71,12 +72,12 @@ process.stdin.on('data', res => {
     
         client
             .get(url, args, function (data, response) {
-                console.log('herefsdfd');
-                console.log({ data: data, response: response })
+                debug({ data: data, response: response })
             })
             .on('error', function (error) {
                 console.log('error response:', error)
                 console.log({ error: error })
+                console.log(`{ "complete": 1, "code": 999, "description": "Failed to execute: ${error}" }`);
             })
     
     

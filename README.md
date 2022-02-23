@@ -6,7 +6,7 @@ This is a Cronicle Plugin that allows you to control the WattBox family of produ
 1. CD to your Cronicle plugin directory in a terminal
 2. Run `npm install cronicle-plugin-snapav-wattbox` to install the plugin and it's required libraries.
 3. Setup the plugin in Cronicle.
-   * Plugin directory will be `<Your Plugin Folder>/cronicle-plugin-snapav-wattbox/index.js`
+   * Plugin directory will be `<Your Plugin Folder>/node_modules/cronicle-plugin-snapav-wattbox/index.js`
    * The plugin requires the following parameters:
       * `ip`: Text Field: IP Address of OBS computer.
       * `command`: Menu: Selects from the available commands Items:
