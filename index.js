@@ -36,7 +36,25 @@ process.stdin.on('data', res => {
             authKey = getAuthKey(username, password);
         }
     
-        let commandUrl = `/control.cgi?outlet=${outlet}&command=${command}`;
+        let commandUrl;
+
+        switch(command){
+            case 'Power Off':
+                commandUrl = `/control.cgi?outlet=${outlet}&command=0`;
+                break;
+            case 'Power On':
+                commandUrl = `/control.cgi?outlet=${outlet}&command=1`;
+                break;
+            case 'Power Reset':
+                commandUrl = `/control.cgi?outlet=${outlet}&command=3`;
+                break;
+            case 'Auto Reboot On':
+                commandUrl = `/control.cgi?outlet=0&command=4`;
+                break;
+            case 'Auto Reboot On':
+                commandUrl = `/control.cgi?outlet=0&command=5`;
+                break;
+        }
     
         let client = new Client();
     
@@ -57,7 +75,7 @@ process.stdin.on('data', res => {
                 console.log({ data: data, response: response })
             })
             .on('error', function (error) {
-                debug('error response:', error)
+                console.log('error response:', error)
                 console.log({ error: error })
             })
     
