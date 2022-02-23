@@ -16,81 +16,79 @@
  */
 
 var Client = require('node-rest-client').Client;
-var debug =require('debug')('Wattbox-Plugin');
+var debug = require('debug')('Wattbox-Plugin');
 
 var data;
 
-process.stdin.on('data', res => {
-    data = JSON.parse(res);
-    console.log('Starting Plugin');
+process.stdin.on('data', (res) => {
+	data = JSON.parse(res);
+	console.log('Starting Plugin');
 
-    try {
-        let ip = data['params']['ip'];
-        let outlet = data['params']['outlet'];
-        let command = data['params']['command'];
-        let username = data['params']['username'];
-        let password = data['params']['password'];
-    
-        let authKey;
-    
-        if(username.length > 0 && password.length > 0){
-            authKey = getAuthKey(username, password);
-        }
-    
-        let commandUrl;
+	try {
+		let ip = data['params']['ip'];
+		let outlet = data['params']['outlet'];
+		let command = data['params']['command'];
+		let username = data['params']['username'];
+		let password = data['params']['password'];
 
-        switch(command){
-            case 'Power Off':
-                commandUrl = `/control.cgi?outlet=${outlet}&command=0`;
-                break;
-            case 'Power On':
-                commandUrl = `/control.cgi?outlet=${outlet}&command=1`;
-                break;
-            case 'Power Reset':
-                commandUrl = `/control.cgi?outlet=${outlet}&command=3`;
-                break;
-            case 'Auto Reboot On':
-                commandUrl = `/control.cgi?outlet=0&command=4`;
-                break;
-            case 'Auto Reboot On':
-                commandUrl = `/control.cgi?outlet=0&command=5`;
-                break;
-        }
-    
-        let client = new Client();
-    
-        let url = 'http://' + ip + commandUrl;
-    
-        console.log('making request:', url)
-    
-        var args = {
-            headers: { 
-                'Content-Type': 'application/json',
-                'Authorization': `Basic ${authKey}`
-            },
-        }
-    
-        client
-            .get(url, args, function (data, response) {
-                debug({ data: data, response: response })
-            })
-            .on('error', function (error) {
-                console.log('error response:', error)
-                console.log({ error: error })
-                console.log(`{ "complete": 1, "code": 999, "description": "Failed to execute: ${error}" }`);
-            })
-    
-    
-        console.log('{ "complete": 1 }');
-        
-    } catch (err) {
-        console.log(err);
-        console.log('{ "complete": 1, "code": 999, "description": "Failed to execute." }')
-    }
+		let authKey;
+
+		if (username.length > 0 && password.length > 0) {
+			authKey = getAuthKey(username, password);
+		}
+
+		let commandUrl;
+
+		switch (command) {
+			case 'Power Off':
+				commandUrl = `/control.cgi?outlet=${outlet}&command=0`;
+				break;
+			case 'Power On':
+				commandUrl = `/control.cgi?outlet=${outlet}&command=1`;
+				break;
+			case 'Power Reset':
+				commandUrl = `/control.cgi?outlet=${outlet}&command=3`;
+				break;
+			case 'Auto Reboot On':
+				commandUrl = `/control.cgi?outlet=0&command=4`;
+				break;
+			case 'Auto Reboot Off':
+				commandUrl = `/control.cgi?outlet=0&command=5`;
+				break;
+		}
+
+		let client = new Client();
+
+		let url = 'http://' + ip + commandUrl;
+
+		console.log('making request:', url);
+
+		var args = {
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Basic ${authKey}`,
+			},
+		};
+
+		client
+			.get(url, args, function (data, response) {
+				debug({ data: data, response: response });
+			})
+			.on('error', function (error) {
+				console.log('error response:', error);
+				console.log({ error: error });
+				console.log(`{ "complete": 1, "code": 999, "description": "Failed to execute: ${error}" }`);
+			});
+
+		console.log('{ "complete": 1 }');
+	} catch (err) {
+		console.log(err);
+		console.log('{ "complete": 1, "code": 999, "description": "Failed to execute." }');
+	}
 });
 
-function getAuthKey(username, password){
-    let authString = username + ':' + password;
-    let auth64 = Buffer.from(authString).toString('base64');
-    return auth64;
+function getAuthKey(username, password) {
+	let authString = username + ':' + password;
+	let auth64 = Buffer.from(authString).toString('base64');
+	return auth64;
 }
