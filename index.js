@@ -63,9 +63,12 @@ process.stdin.on('data', (res) => {
 
 		console.log('making request:', url);
 
-		var args = {
+		let args = {
 			headers: {
-				'Content-Type': 'application/json',
+				Host: self.config.ip,
+				'Keep-Alive': '300',
+				Connection: 'keep-alive',
+				'User-Agent': 'APP',
 				Authorization: `Basic ${authKey}`,
 			},
 		};
