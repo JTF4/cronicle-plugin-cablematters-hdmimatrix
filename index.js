@@ -99,11 +99,10 @@ function executeCommand(command) {
 	let url = 'http://' + ip + command;
 	rest_get(url)
 		.then((res) => {
-			console.log(res);
+			console.log(new Buffer.from(res).toString());
 		})
 		.catch((error) => {
 			console.log('error response:', error);
-
 			console.log(`{ "complete": 1, "code": 999, "description": "Failed to execute: ${error}" }`);
 		})
 		.finally(() => {
@@ -121,7 +120,7 @@ function executeCommandNoExit(command) {
 	let url = 'http://' + ip + command;
 	rest_get(url)
 		.then((res) => {
-			console.log(res);
+			console.log(new Buffer.from(res).toString());
 		})
 		.catch((error) => {
 			console.log('error response:', error);
