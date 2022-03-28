@@ -95,6 +95,7 @@ process.stdin.on('data', (res) => {
 		console.log(err);
 
 		console.log(`{ "complete": 1, "code": 999, "description": "Failed to execute: ${err}" }`);
+		process.exit(999);
 	}
 });
 
@@ -115,8 +116,9 @@ function executeCommand(command) {
 			} else {
 				try {
 					res = new Buffer.from(res).toString();
-					if(res.includes('401 Unauthorized')) {
+					if (res.includes('401 Unauthorized')) {
 						console.log(`{ "complete": 1, "code": 999, "description": "Authentication Error: ${res}" }`);
+						process.exit(999);
 					}
 				} catch (e) {
 					res = res;
@@ -127,6 +129,7 @@ function executeCommand(command) {
 		.catch((error) => {
 			console.log('error response:', error);
 			console.log(`{ "complete": 1, "code": 999, "description": "Failed to execute: ${error}" }`);
+			process.exit(999);
 		})
 		.finally(() => {
 			console.log('Command Complete');
@@ -151,20 +154,20 @@ function executeCommandNoExit(command) {
 			} else {
 				try {
 					res = new Buffer.from(res).toString();
-					if(res.includes('401 Unauthorized')) {
+					if (res.includes('401 Unauthorized')) {
 						console.log(`{ "complete": 1, "code": 999, "description": "Authentication Error: ${res}" }`);
+						process.exit(999);
 					}
 				} catch (e) {
 					res = res;
 				}
 			}
-
 			console.log(res);
 		})
 		.catch((error) => {
 			console.log('error response:', error);
-
 			console.log(`{ "complete": 1, "code": 999, "description": "Failed to execute: ${error}" }`);
+			process.exit(999);
 		});
 }
 
