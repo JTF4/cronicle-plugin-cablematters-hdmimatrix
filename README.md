@@ -10,7 +10,8 @@ This is a Cronicle Plugin that allows you to control the WattBox family of produ
    * The plugin requires the following parameters:
       * `ip`: Text Field: IP Address of OBS computer.
       * `command`: Menu: Selects from the available commands Items:
-        * `Power Off, Power On, Power Reset, Auto Reboot On, Auto Reboot Off`
+        * `Power Off, Power On, Custom Power Reset, Power Reset, Auto Reboot On, Auto Reboot Off`
+      * `extraData`: Test Field: The time it takes for the custom power reset function to happen
       * `outlet`: Text Field: The outlet number you want to control.
       * `username`: Text Field: The username for the WattBox.
       * `password`: Text Field: The password for the WattBox.
