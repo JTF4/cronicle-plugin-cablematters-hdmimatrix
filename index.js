@@ -88,11 +88,11 @@ process.stdin.on('data', (res) => {
 
 /**
  * It sends a GET request to the server with the command URL.
- * @param commandUrl - The URL to the command.
+ * @param command - The URL to the command.
  */
 
-function executeCommand(commandUrl) {
-	let url = 'http://' + ip + commandUrl;
+function executeCommand(command) {
+	let url = 'http://' + ip + command;
 	rest_get(url).then((res) => {
 		console.log(res);
 	}).catch((err) => {
@@ -107,11 +107,11 @@ function executeCommand(commandUrl) {
 
 /**
  * It executes a command on the server and returns the result.
- * @param commandUrl - the URL to the command.
+ * @param command - the URL to the command.
  */
 
-function executeCommandNoExit(commandUrl) {
-	let url = 'http://' + ip + commandUrl;
+function executeCommandNoExit(command) {
+	let url = 'http://' + ip + command;
 	rest_get(url).then((res) => {
 		console.log(res);
 	}).catch((err) => {
