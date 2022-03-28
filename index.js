@@ -21,6 +21,11 @@ var debug = require('debug')('Wattbox-Plugin');
 var data;
 
 var ip;
+var outlet;
+var command;
+var extraData;
+var username;
+var password;
 
 process.stdin.on('data', (res) => {
 	data = JSON.parse(res);
@@ -28,11 +33,11 @@ process.stdin.on('data', (res) => {
 
 	try {
 		ip = data['params']['ip'];
-		let outlet = data['params']['outlet'];
-		let command = data['params']['command'];
-		let extraData = data['params']['extraData'];
-		let username = data['params']['username'];
-		let password = data['params']['password'];
+		outlet = data['params']['outlet'];
+		command = data['params']['command'];
+		extraData = data['params']['extraData'];
+		username = data['params']['username'];
+		password = data['params']['password'];
 
 		let authKey;
 
@@ -130,6 +135,8 @@ function executeCommandNoExit(command) {
 function rest_get(url) {
 
 	console.log('sending request to: ' + url);
+	
+	let authKey = getAuthKey(username, password);
 
 	let client = new Client();
 
