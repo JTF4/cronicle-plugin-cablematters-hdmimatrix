@@ -1,6 +1,6 @@
 {
   "name": "cronicle-plugin-snapav-wattbox",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Control WattBox power supplies through Cronicle",
   "main": "index.js",
   "scripts": {
