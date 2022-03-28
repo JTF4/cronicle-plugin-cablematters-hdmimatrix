@@ -1,13 +1,13 @@
 {
   "name": "cronicle-plugin-snapav-wattbox",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "description": "Control WattBox power supplies through Cronicle",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "prettier": "prettier",
-		"eslint": "eslint"
+    "eslint": "eslint"
   },
   "repository": {
     "type": "git",
@@ -30,8 +30,8 @@
     "node-rest-client": "^3.1.1"
   },
   "devDependencies": {
-		"eslint": "^8.4.1",
-		"eslint-plugin-prettier": "^4.0.0",
-		"prettier": "^2.5.1"
-	}
+    "eslint": "^8.4.1",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.5.1"
+  }
 }

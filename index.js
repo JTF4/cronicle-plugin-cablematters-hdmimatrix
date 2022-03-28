@@ -20,12 +20,14 @@ var debug = require('debug')('Wattbox-Plugin');
 
 var data;
 
+var ip;
+
 process.stdin.on('data', (res) => {
 	data = JSON.parse(res);
 	console.log('Starting Plugin');
 
 	try {
-		let ip = data['params']['ip'];
+		ip = data['params']['ip'];
 		let outlet = data['params']['outlet'];
 		let command = data['params']['command'];
 		let extraData = data['params']['extraData'];
