@@ -38,6 +38,14 @@ process.stdin.on('data', (res) => {
 		username = data['params']['username'];
 		password = data['params']['password'];
 
+		/*ip = '192.168.11.40'
+		outlet = '1'
+		command = 'Custom Power Reset'
+		extraData = '5000'
+		username = 'wattbox'
+		password = 'wattbox'
+		*/
+
 		let commandUrl;
 
 		switch (command) {
@@ -99,7 +107,22 @@ function executeCommand(command) {
 	let url = 'http://' + ip + command;
 	rest_get(url)
 		.then((res) => {
-			console.log(new Buffer.from(res).toString());
+			if (typeof res === 'Buffer') {
+				res = new Buffer.from(res).toString();
+				res = res.toString();
+			} else if (typeof res === 'string') {
+				res = res;
+			} else {
+				try {
+					res = new Buffer.from(res).toString();
+					if(res.includes('401 Unauthorized')) {
+						console.log(`{ "complete": 1, "code": 999, "description": "Authentication Error: ${res}" }`);
+					}
+				} catch (e) {
+					res = res;
+				}
+			}
+			console.log(res);
 		})
 		.catch((error) => {
 			console.log('error response:', error);
@@ -120,7 +143,23 @@ function executeCommandNoExit(command) {
 	let url = 'http://' + ip + command;
 	rest_get(url)
 		.then((res) => {
-			console.log(new Buffer.from(res).toString());
+			if (typeof res === 'Buffer') {
+				res = new Buffer.from(res).toString();
+				res = res.toString();
+			} else if (typeof res === 'string') {
+				res = res;
+			} else {
+				try {
+					res = new Buffer.from(res).toString();
+					if(res.includes('401 Unauthorized')) {
+						console.log(`{ "complete": 1, "code": 999, "description": "Authentication Error: ${res}" }`);
+					}
+				} catch (e) {
+					res = res;
+				}
+			}
+
+			console.log(res);
 		})
 		.catch((error) => {
 			console.log('error response:', error);
