@@ -16,7 +16,6 @@
  */
 
 var Client = require('node-rest-client').Client;
-var debug = require('debug')('Wattbox-Plugin');
 
 var data;
 
@@ -39,12 +38,6 @@ process.stdin.on('data', (res) => {
 		username = data['params']['username'];
 		password = data['params']['password'];
 
-		let authKey;
-
-		if (username.length > 0 && password.length > 0) {
-			authKey = getAuthKey(username, password);
-		}
-
 		let commandUrl;
 
 		switch (command) {
@@ -58,8 +51,14 @@ process.stdin.on('data', (res) => {
 				break;
 			case 'Custom Power Reset':
 				commandUrl = `/control.cgi?outlet=${outlet}&command=3`;
-				if (!extraData) {
-					extraData = '5000';
+				if (extraData) {
+					try {
+						Number(extraData);
+					} catch (e) {
+						extraData = 5000;
+					}
+				} else {
+					extraData = 5000;
 				}
 				// Turn the switch off
 				commandUrl = `/control.cgi?outlet=${outlet}&command=0`;
@@ -67,8 +66,8 @@ process.stdin.on('data', (res) => {
 
 				// Turn the switch on
 				setTimeout(() => {
-					commandUrl = `/control.cgi?outlet=${outlet}&command=1`;
-					executeCommand(commandUrl);
+					let commandUrl2 = `/control.cgi?outlet=${outlet}&command=1`;
+					executeCommand(commandUrl2);
 				}, extraData);
 				break;
 			case 'Power Reset':
@@ -86,7 +85,7 @@ process.stdin.on('data', (res) => {
 		}
 	} catch (err) {
 		console.log(err);
-		console.log({ error: error });
+
 		console.log(`{ "complete": 1, "code": 999, "description": "Failed to execute: ${err}" }`);
 	}
 });
@@ -98,16 +97,19 @@ process.stdin.on('data', (res) => {
 
 function executeCommand(command) {
 	let url = 'http://' + ip + command;
-	rest_get(url).then((res) => {
-		console.log(res);
-	}).catch((err) => {
-		console.log('error response:', error);
-		console.log({ error: error });
-		console.log(`{ "complete": 1, "code": 999, "description": "Failed to execute: ${error}" }`);
-	}).finally (() => {
-		console.log('Command Complete');
-		console.log('{ "complete": 1 }');
-	});
+	rest_get(url)
+		.then((res) => {
+			console.log(res);
+		})
+		.catch((error) => {
+			console.log('error response:', error);
+
+			console.log(`{ "complete": 1, "code": 999, "description": "Failed to execute: ${error}" }`);
+		})
+		.finally(() => {
+			console.log('Command Complete');
+			console.log('{ "complete": 1 }');
+		});
 }
 
 /**
@@ -117,13 +119,15 @@ function executeCommand(command) {
 
 function executeCommandNoExit(command) {
 	let url = 'http://' + ip + command;
-	rest_get(url).then((res) => {
-		console.log(res);
-	}).catch((err) => {
-		console.log('error response:', error);
-		console.log({ error: error });
-		console.log(`{ "complete": 1, "code": 999, "description": "Failed to execute: ${error}" }`);
-	})
+	rest_get(url)
+		.then((res) => {
+			console.log(res);
+		})
+		.catch((error) => {
+			console.log('error response:', error);
+
+			console.log(`{ "complete": 1, "code": 999, "description": "Failed to execute: ${error}" }`);
+		});
 }
 
 /**
@@ -133,9 +137,8 @@ function executeCommandNoExit(command) {
  */
 
 function rest_get(url) {
-
 	console.log('sending request to: ' + url);
-	
+
 	let authKey = getAuthKey(username, password);
 
 	let client = new Client();
@@ -152,14 +155,14 @@ function rest_get(url) {
 
 	return new Promise((resolve, reject) => {
 		client
-			.get(url, args, function (data, response) {
+			.get(url, args, function (data) {
 				resolve(data);
 			})
 			.on('error', function (error) {
 				reject(error);
 			});
 	});
-};
+}
 
 /**
  * Given a username and password, return a base64 encoded string of the username and password
