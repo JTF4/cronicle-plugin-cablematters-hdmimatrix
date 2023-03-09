@@ -1,33 +1,34 @@
 {
-  "name": "cronicle-plugin-snapav-wattbox",
+  "name": "cronicle-plugin-cablematters-hdmimatrix",
   "version": "1.0.11",
-  "description": "Control WattBox power supplies through Cronicle",
+  "description": "Control Cable Matters HDMI Matrix through Cronicle",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "prettier": "prettier",
-    "eslint": "eslint"
+    "lint": "prettier -w",
+    "eslint": "eslint",
+    "install": "./install.sh"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JTF4/cronicle-plugin-snapav-wattbox.git"
+    "url": "git+https://github.com/JTF4/cronicle-plugin-cablematters-hdmimatrix.git"
   },
   "keywords": [
-    "wattbox",
-    "cronicle",
-    "power",
-    "snapav"
+    "cablematters",
+    "hdmimatrix",
+    "hdmi",
+    "video"
   ],
   "author": "David Stevens <issues@jtf4.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/JTF4/cronicle-plugin-snapav-wattbox/issues"
+    "url": "https://github.com/JTF4/cronicle-plugin-cablematters-hdmimatrix/issues"
   },
-  "homepage": "https://github.com/JTF4/cronicle-plugin-snapav-wattbox#readme",
+  "homepage": "https://github.com/JTF4/cronicle-plugin-cablematters-hdmimatrix#readme",
   "dependencies": {
-    "debug": "^4.3.3",
-    "node-rest-client": "^3.1.1"
+    "debug": "^4.3.3"
   },
   "devDependencies": {
     "eslint": "^8.4.1",

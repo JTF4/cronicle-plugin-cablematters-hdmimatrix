@@ -1,8 +1,8 @@
 /*
  * WattBox Cronicle Plugin
  *
- * Copyright (c) 2022 David Stevens
- * Author: David Stevens <issues@jtf4.com>
+ * Copyright (c) 2023 David Stevens
+ * Author: David Stevens <opensource@jtf4.com>
  *
  * This program is free software.
  * You should have received a copy of the MIT license along with
@@ -15,82 +15,82 @@
  *
  */
 
-var Client = require('node-rest-client').Client;
+const net = require('net');
+
+const maxOutput = 4;
 
 var data;
 
 var ip;
-var outlet;
-var command;
-var extraData;
-var username;
-var password;
+var input;
+var output;
+
+var socket = new net.Socket();
 
 process.stdin.on('data', (res) => {
 	data = JSON.parse(res);
 	console.log('Starting Plugin');
 
 	try {
+
+		/*
 		ip = data['params']['ip'];
-		outlet = data['params']['outlet'];
-		command = data['params']['command'];
-		extraData = data['params']['extraData'];
-		username = data['params']['username'];
-		password = data['params']['password'];
-
-		/*ip = '192.168.11.40'
-		outlet = '1'
-		command = 'Custom Power Reset'
-		extraData = '5000'
-		username = 'wattbox'
-		password = 'wattbox'
+		input = data['params']['outlet'];
+		output = data['params']['command'];
 		*/
+		ip = '192.168.11.181'
+		input = '2'
+		output = 'all'
+		
+		console.log('Connecting to device');
+		socket.connect({ port: 23, host: ip});
 
-		let commandUrl;
+		socket.on('connect', () => {
 
-		switch (command) {
-			case 'Power Off':
-				commandUrl = `/control.cgi?outlet=${outlet}&command=0`;
-				executeCommand(commandUrl);
-				break;
-			case 'Power On':
-				commandUrl = `/control.cgi?outlet=${outlet}&command=1`;
-				executeCommand(commandUrl);
-				break;
-			case 'Custom Power Reset':
-				commandUrl = `/control.cgi?outlet=${outlet}&command=3`;
-				if (extraData) {
-					try {
-						Number(extraData);
-					} catch (e) {
-						extraData = 5000;
-					}
-				} else {
-					extraData = 5000;
+			console.log('Connected');
+
+			if (output == 'all') {
+				console.log('Setting all outputs.')
+				let i = 1;
+		
+				while (i <= maxOutput) {
+					loop(i);
+					i++;
 				}
-				// Turn the switch off
-				commandUrl = `/control.cgi?outlet=${outlet}&command=0`;
-				executeCommandNoExit(commandUrl);
+		
+				function loop(i) {
+					setTimeout(function () {
+						console.log('Setting cross point')
+						console.log(`Output: ${i} to Input: ${input}`)
+						socket.write(setCrosspoint(i, input));
 
-				// Turn the switch on
-				setTimeout(() => {
-					let commandUrl2 = `/control.cgi?outlet=${outlet}&command=1`;
-					executeCommand(commandUrl2);
-				}, extraData);
-				break;
-			case 'Power Reset':
-				commandUrl = `/control.cgi?outlet=${outlet}&command=3`;
-				executeCommand(commandUrl);
-				break;
-			case 'Auto Reboot On':
-				commandUrl = `/control.cgi?outlet=0&command=4`;
-				executeCommand(commandUrl);
-				break;
-			case 'Auto Reboot Off':
-				commandUrl = `/control.cgi?outlet=0&command=5`;
-				executeCommand(commandUrl);
-				break;
-		}
+						if (i == maxOutput) {
+							console.log('Disconnecting');
+							socket.destroy();
+							console.log('Disconnected');
+							console.log('{ "complete": 1 }');
+							process.exit(0);
+						}
+					}, 500 * i);
+				}
+			} else {
+				console.log('Setting cross point')
+				console.log(`Output: ${output} to Input: ${input}`)
+				socket.write(setCrosspoint(output, input));
+				console.log('Disconnecting');
+				socket.destroy();
+				console.log('Disconnected');
+				console.log('{ "complete": 1 }');
+				process.exit(0);
+			}
+		})
+
+		socket.on('error', (error) => {
+			throw new Error(error);
+		})
+
+		
+		
 	} catch (err) {
 		console.log(err);
 
@@ -100,120 +100,60 @@ process.stdin.on('data', (res) => {
 });
 
 /**
- * It sends a GET request to the server with the command URL.
- * @param command - The URL to the command.
+ * It takes two arguments, an output and an input, and returns a buffer that can be sent to the device
+ * @param output - The output port you want to set.
+ * @param input - The input port number (1-4)
+ * @returns A buffer object
  */
 
-function executeCommand(command) {
-	let url = 'http://' + ip + command;
-	rest_get(url)
-		.then((res) => {
-			if (typeof res === 'Buffer') {
-				res = new Buffer.from(res).toString();
-				res = res.toString();
-			} else if (typeof res === 'string') {
-				res = res;
-			} else {
-				try {
-					res = new Buffer.from(res).toString();
-					if (res.includes('401 Unauthorized')) {
-						console.log(`{ "complete": 1, "code": 999, "description": "Authentication Error: ${res}" }`);
-						process.exit(999);
-					}
-				} catch (e) {
-					res = res;
-				}
-			}
-			console.log(res);
-		})
-		.catch((error) => {
-			console.log('error response:', error);
-			console.log(`{ "complete": 1, "code": 999, "description": "Failed to execute: ${error}" }`);
-			process.exit(999);
-		})
-		.finally(() => {
-			console.log('Command Complete');
-			console.log('{ "complete": 1 }');
-		});
+function setCrosspoint(output, input) {
+	// 13 Byte Package
+	//'a55b0203input port(1~4)00output port(1~4)0000000000'
+	let inputHex = parseInt(input).toString(16).padStart(2, '0');
+	let outputHex = parseInt(output).toString(16).padStart(2, '0');
+	let cmdRaw = `A55B0203${inputHex}00${outputHex}0000000000`;
+
+	let hexAdded =
+		0xa5 + 0x5b + 0x02 + 0x03 + parseInt(input) + 0x00 + parseInt(output) + 0x00 + 0x00 + 0x00 + 0x00 + 0x00;
+
+	let checksumByte = 0x100;
+
+	let checksum = (checksumByte - hexAdded) & 0xff;
+
+	let cmd = cmdRaw + checksum.toString(16);
+
+	let buf = Buffer.from(cmd, 'hex');
+
+	return buf;
+
 }
 
-/**
- * It executes a command on the server and returns the result.
- * @param command - the URL to the command.
- */
-
-function executeCommandNoExit(command) {
-	let url = 'http://' + ip + command;
-	rest_get(url)
-		.then((res) => {
-			if (typeof res === 'Buffer') {
-				res = new Buffer.from(res).toString();
-				res = res.toString();
-			} else if (typeof res === 'string') {
-				res = res;
-			} else {
-				try {
-					res = new Buffer.from(res).toString();
-					if (res.includes('401 Unauthorized')) {
-						console.log(`{ "complete": 1, "code": 999, "description": "Authentication Error: ${res}" }`);
-						process.exit(999);
-					}
-				} catch (e) {
-					res = res;
-				}
-			}
-			console.log(res);
-		})
-		.catch((error) => {
-			console.log('error response:', error);
-			console.log(`{ "complete": 1, "code": 999, "description": "Failed to execute: ${error}" }`);
-			process.exit(999);
-		});
-}
 
 /**
- * It sends a GET request to the server.
- * @param url - The URL to send the request to.
- * @returns The response from the server.
+ * It takes a number, converts it to hex, adds a checksum, and returns a buffer
+ * @param input - The input buffer
+ * @returns A buffer of the hexadecimal representation of the input.
  */
 
-function rest_get(url) {
-	console.log('sending request to: ' + url);
+function getChecksum(input) {
+	console.log(1);
 
-	let authKey = getAuthKey(username, password);
+	let inputBuf = input;
+	let checkBuf = 0x100;
 
-	let client = new Client();
+	let checksum = checkBuf - inputBuf;
 
-	let args = {
-		headers: {
-			Host: ip,
-			'Keep-Alive': '300',
-			Connection: 'keep-alive',
-			'User-Agent': 'APP',
-			Authorization: `Basic ${authKey}`,
-		},
-	};
+	console.log(2);
 
-	return new Promise((resolve, reject) => {
-		client
-			.get(url, args, function (data) {
-				resolve(data);
-			})
-			.on('error', function (error) {
-				reject(error);
-			});
-	});
-}
+	let cmd = inputBuf.toString(16) + checksum.toString(16);
 
-/**
- * Given a username and password, return a base64 encoded string of the username and password
- * @param username - The username of the user you want to authenticate.
- * @param password - The password for the user.
- * @returns The authKey is being returned.
- */
+	console.log(checksum.toString(16));
 
-function getAuthKey(username, password) {
-	let authString = username + ':' + password;
-	let auth64 = Buffer.from(authString).toString('base64');
-	return auth64;
+	console.log(3);
+
+	let hex = Buffer.from(cmd, 'hex');
+
+	console.log(input, inputBuf, checkBuf, checksum.toString(16), cmd, hex);
+
+	return hex;
 }
