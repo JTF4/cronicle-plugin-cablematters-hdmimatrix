@@ -1,6 +1,6 @@
 {
   "name": "cronicle-plugin-cablematters-hdmimatrix",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Control Cable Matters HDMI Matrix through Cronicle",
   "main": "index.js",
   "scripts": {

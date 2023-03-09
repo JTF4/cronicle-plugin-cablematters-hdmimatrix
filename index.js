@@ -35,8 +35,8 @@ process.stdin.on('data', (res) => {
 
 		
 		ip = data['params']['ip'];
-		input = data['params']['outlet'];
-		output = data['params']['command'];
+		input = data['params']['input'];
+		output = data['params']['output'];
 
 		/*
 		ip = '192.168.11.181'
