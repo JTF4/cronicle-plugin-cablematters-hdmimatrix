@@ -1,6 +1,6 @@
 {
   "name": "cronicle-plugin-cablematters-hdmimatrix",
-  "version": "1.0.11",
+  "version": "1.0.3",
   "description": "Control Cable Matters HDMI Matrix through Cronicle",
   "main": "index.js",
   "scripts": {
@@ -8,8 +8,7 @@
     "start": "node index.js",
     "prettier": "prettier",
     "lint": "prettier -w",
-    "eslint": "eslint",
-    "install": "./install.sh"
+    "eslint": "eslint"
   },
   "repository": {
     "type": "git",

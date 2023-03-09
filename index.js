@@ -33,15 +33,16 @@ process.stdin.on('data', (res) => {
 
 	try {
 
-		/*
+		
 		ip = data['params']['ip'];
 		input = data['params']['outlet'];
 		output = data['params']['command'];
-		*/
+
+		/*
 		ip = '192.168.11.181'
 		input = '2'
 		output = 'all'
-		
+		*/
 		console.log('Connecting to device');
 		socket.connect({ port: 23, host: ip});
 
